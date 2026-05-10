@@ -10,15 +10,12 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     try {
-      const response = await fetch(`${API_URL}/auth/google`, {
-        method: 'POST',
-      });
-      const data = await response.json();
-      console.log('Login success:', data);
-      // In a real app, we would store the token
+      // For Vercel demo: attempt fetch but bypass on failure or timeout
+      fetch(`${API_URL}/auth/google`, { method: 'POST' }).catch(() => {});
+      console.log('Demo Login: Bypassing auth for frontend preview');
       router.push('/(auth)/onboarding/step1');
     } catch (error) {
-      console.error('Login failed:', error);
+      router.push('/(auth)/onboarding/step1');
     }
   };
 
