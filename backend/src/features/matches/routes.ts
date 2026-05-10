@@ -6,8 +6,21 @@ const router = Router();
 router.get('/', (req, res) => {
   const db = getDb();
   res.json({
-    matches: db.matches,
-    likes: db.users.slice(1), // Mock: everyone except the first user liked you
+    matches: db.matches.map((m: any) => ({
+      id: m.id,
+      name: m.display_name || m.name || 'Unknown',
+      photo: (m.photos && m.photos.length > 0) ? m.photos[0].url : 'https://picsum.photos/100/100',
+      lastMessage: 'Say hi!',
+      time: 'Just now',
+      unread: true
+    })),
+    likes: db.users.slice(1).map(u => ({
+      id: u.id,
+      name: u.display_name,
+      photo: (u.photos && u.photos.length > 0) ? u.photos[0].url : 'https://picsum.photos/200/300',
+      college: u.college,
+      reaction: '🔥'
+    })),
   });
 });
 

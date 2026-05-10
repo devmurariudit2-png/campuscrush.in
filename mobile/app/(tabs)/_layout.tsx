@@ -39,6 +39,7 @@ export default function TabLayout() {
         name="discover"
         options={{
           title: 'Discover',
+          href: '/discover',
           tabBarIcon: ({ color, focused }) => <TabBarIcon name="search" color={color} focused={focused} />,
         }}
       />
@@ -46,6 +47,7 @@ export default function TabLayout() {
         name="matches"
         options={{
           title: 'Matches',
+          href: '/matches',
           tabBarIcon: ({ color, focused }) => <TabBarIcon name="chatbubbles" color={color} focused={focused} />,
         }}
       />
@@ -53,6 +55,7 @@ export default function TabLayout() {
         name="events"
         options={{
           title: 'Events',
+          href: '/events',
           tabBarIcon: ({ color, focused }) => <TabBarIcon name="ticket" color={color} focused={focused} />,
         }}
       />
@@ -60,6 +63,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
+          href: '/profile',
           tabBarIcon: ({ color, focused }) => <TabBarIcon name="person" color={color} focused={focused} />,
         }}
       />
