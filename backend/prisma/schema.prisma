@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  display_name String
+  age          Int
+  college      String
+  department   String
+  coins        Int      @default(0)
+  photos       Photo[]
+  prompts      Prompt[]
+  swipesSent   Swipe[]  @relation("SwipesSent")
+  swipesRecv   Swipe[]  @relation("SwipesReceived")
+  matches1     Match[]  @relation("Matches1")
+  matches2     Match[]  @relation("Matches2")
+  messages     Message[]
+}
+
+model Photo {
+  id      String @id @default(cuid())
+  url     String
+  caption String?
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+model Prompt {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+}
+
+model Swipe {
+  id         String   @id @default(cuid())
+  fromId     String
+  toId       String
+  type       String   // 'LIKE' or 'NOPE'
+  createdAt  DateTime @default(now())
+  fromUser   User     @relation("SwipesSent", fields: [fromId], references: [id])
+  toUser     User     @relation("SwipesReceived", fields: [toId], references: [id])
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  user1Id   String
+  user2Id   String
+  createdAt DateTime @default(now())
+  user1     User     @relation("Matches1", fields: [user1Id], references: [id])
+  user2     User     @relation("Matches2", fields: [user2Id], references: [id])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  senderId  String
+  matchId   String
+  createdAt DateTime @default(now())
+  sender    User     @relation(fields: [senderId], references: [id])
+}
+
+model Event {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  location     String
+  date         String
+  category     String
+  college      String
+  attendees    Int      @default(0)
+  crushUsers   Int      @default(0)
+  rsvps        Int      @default(0)
+  image        String
+}

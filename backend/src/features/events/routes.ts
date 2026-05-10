@@ -1,26 +1,26 @@
 import { Router } from 'express';
-import { getDb, saveDb } from '../../db/dbManager';
+import { prisma } from '../../db/prisma';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  const db = getDb();
-  const college = req.query.college;
-  let events = db.events;
-  if (college) {
-    events = events.filter(e => e.college_filter === college);
-  }
+router.get('/', async (req, res) => {
+  const college = req.query.college as string;
+  const events = await prisma.event.findMany({
+    where: college ? { college } : {}
+  });
   res.json(events);
 });
 
-router.post('/:id/rsvp', (req, res) => {
-  const db = getDb();
-  const event = db.events.find(e => e.id === req.params.id);
-  if (event) {
-    event.rsvps += 1;
-    saveDb(db);
+router.post('/:id/rsvp', async (req, res) => {
+  try {
+    const event = await prisma.event.update({
+      where: { id: req.params.id },
+      data: {
+        rsvps: { increment: 1 }
+      }
+    });
     res.json(event);
-  } else {
+  } catch (error) {
     res.status(404).json({ message: 'Event not found' });
   }
 });

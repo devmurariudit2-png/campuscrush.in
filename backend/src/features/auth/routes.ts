@@ -1,12 +1,16 @@
 import { Router } from 'express';
-import { getDb } from '../../db/dbManager';
+import { prisma } from '../../db/prisma';
 
 const router = Router();
 
-router.post('/google', (req, res) => {
-  const db = getDb();
+router.post('/google', async (req, res) => {
   // Mock login: always return the first user as logged in
-  const user = db.users[0];
+  const user = await prisma.user.findFirst({
+    include: {
+      photos: true,
+      prompts: true,
+    }
+  });
   res.json({ 
     user,
     token: 'mock-jwt-token',

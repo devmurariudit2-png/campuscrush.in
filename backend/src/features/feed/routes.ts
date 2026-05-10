@@ -1,13 +1,20 @@
 import { Router } from 'express';
-import { getDb } from '../../db/dbManager';
+import { prisma } from '../../db/prisma';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  const db = getDb();
+router.get('/', async (req, res) => {
+  const userId = req.query.userId as string;
   // Simple algorithm: show all users except self (if provided)
-  const userId = req.query.userId;
-  const feed = db.users.filter(u => u.id !== userId);
+  const feed = await prisma.user.findMany({
+    where: {
+      id: { not: userId }
+    },
+    include: {
+      photos: true,
+      prompts: true,
+    }
+  });
   res.json(feed);
 });
 

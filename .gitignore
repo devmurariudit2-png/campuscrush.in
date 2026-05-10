@@ -5,3 +5,5 @@ web-build/
 .vercel/
 .env*.local
 *.log
+.env
+backend/.env

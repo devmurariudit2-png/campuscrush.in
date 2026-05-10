@@ -1,26 +1,38 @@
 import { Router } from 'express';
-import { getDb, saveDb } from '../../db/dbManager';
+import { prisma } from '../../db/prisma';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  const db = getDb();
-  const userId = req.query.userId || '1';
-  const user = db.users.find(u => u.id === userId);
+router.get('/', async (req, res) => {
+  const userId = (req.query.userId as string) || '1';
+  const user = await prisma.user.findUnique({
+    where: { id: userId }
+  });
   res.json({ balance: user?.coins || 0 });
 });
 
-router.post('/spend', (req, res) => {
-  const db = getDb();
-  const userId = req.body.userId || '1';
-  const amount = req.body.amount || 10;
-  const user = db.users.find(u => u.id === userId);
-  if (user && user.coins >= amount) {
-    user.coins -= amount;
-    saveDb(db);
-    res.json({ balance: user.coins });
-  } else {
-    res.status(400).json({ message: 'Insufficient coins' });
+router.post('/spend', async (req, res) => {
+  const userId = (req.body.userId as string) || '1';
+  const amount = Number(req.body.amount) || 10;
+  
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (user && user.coins >= amount) {
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          coins: { decrement: amount }
+        }
+      });
+      res.json({ balance: updatedUser.coins });
+    } else {
+      res.status(400).json({ message: 'Insufficient coins' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
