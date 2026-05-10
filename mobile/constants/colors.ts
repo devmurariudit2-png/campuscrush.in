@@ -9,13 +9,14 @@ export const Colors = {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorLight,
   },
-  dark: {
+  darkTheme: {
     text: '#fff',
     background: '#000',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
   },
+  dark: '#1A1A1A',
   crushPink: '#D4537E',
   campusAmber: '#EF9F27',
   lateNightPurple: '#534AB7',
