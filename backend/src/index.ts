@@ -27,6 +27,17 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+// Debugging Instrumentation (API Entry/Exit)
+app.use((req, res, next) => {
+  const start = Date.now();
+  console.log(`[>>] ${req.method} ${req.url}`);
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`[<<] ${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
+  });
+  next();
+});
+
 // Routes
 app.use('/auth', authRoutes);
 app.use('/feed', feedRoutes);
